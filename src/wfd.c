@@ -122,6 +122,7 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
   } else {
     inputfile=NULL;
   }
+  outputFrames = wfd_ms2samples(length);
 
   /* handle offset */
   if (wfd_ms2samples(offset)>0) {
@@ -134,7 +135,7 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
     p_f[i+1] = wfd_ms2samples(p[i]) + p_f[i];
   }
   p_f[3] = wfd_ms2samples(p[4]) + p_f[2];
-  p_f[6]=inputfileinfo.frames;
+  p_f[6] = outputFrames;
   p_f[5] = p_f[6] - wfd_ms2samples(p[3]);
   p_f[4] = p_f[5] - wfd_ms2samples(p[2]);
 
@@ -182,7 +183,6 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
   /* output */
   buf = (short *)malloc(sizeof(short)*(inputfileinfo.channels));
   memset(buf,0,sizeof(short)*(inputfileinfo.channels));
-  outputFrames = wfd_ms2samples(length);
 
   currentFrame = 0;
   for ( ; outputFrames > 0; outputFrames--) {
