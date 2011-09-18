@@ -222,7 +222,7 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
 	goto wfd_append_normal;
       }
       fseek(outfile,-2,SEEK_CUR);
-      d = (c1 & (0x00ff)) | ((c2 & 0x00ff) << 8);
+      d = (c1 & (0x00ff)) | (((c2 & 0x00ff) << 8) & 0xff00);
       r = sum+d;
       fputc( (char)(r & (0x00ff)), outfile);
       fputc( (char)((r>>8) & 0x00ff), outfile);
