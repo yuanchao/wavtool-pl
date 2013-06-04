@@ -126,7 +126,9 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
 
   /* handle offset */
   if (wfd_ms2samples(offset)>0) {
-    sf_seek(inputfile,wfd_ms2samples(offset),SEEK_SET);
+    if (inputfile) {
+      sf_seek(inputfile,wfd_ms2samples(offset),SEEK_SET);
+    }
   }
 
   /* pre-calculate volume */
