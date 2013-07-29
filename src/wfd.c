@@ -85,6 +85,36 @@ double wfd_append_linear_volume(int frame, const int *p, const double *v) {
 }
 
 /**
+ * mix sample A with sample B
+ *
+ * @param a sample A
+ * @param b sample B
+ * @return sample of A mix B
+ */
+short wfd_mix(short a, short b) {
+  int a_t;
+  int b_t;
+  int r1;
+  short ret=0.0;
+
+  a_t = ((int)a)+32768;
+  b_t = ((int)b)+32768;
+
+  if (a_t <= 32768 && b_t <= 32768) {
+    r1 = (a_t * b_t) / 32768;
+  } else {
+    r1 = 2*(a_t+b_t) - (a_t*b_t)/32768 - 65536;
+    if (r1>=65536) {
+      r1 = 65535;
+    }
+  }
+  r1 = r1 - 32768;
+  ret = ((short)r1);
+  return ret;
+}
+
+
+/**
  * append data to dat file
  *
  * @param outputfilename the filename of output file
@@ -225,7 +255,7 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
       }
       fseek(outfile,-2,SEEK_CUR);
       d = (c1 & (0x00ff)) | (((c2 & 0x00ff) << 8) & 0xff00);
-      r = sum+d;
+      r = wfd_mix(sum,d);
       fputc( (char)(r & (0x00ff)), outfile);
       fputc( (char)((r>>8) & 0x00ff), outfile);
       ovrFrames--;
