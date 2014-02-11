@@ -1,0 +1,9 @@
+
+= Readme for wavtool-pl = 
+
+== Summary ==
+wavtool-pl is a drop-in replacement for wavtool inside UTAU.
+
+== How to build from git tree ==
+ * Run 'autoreconf -fi'
+ * Read INSTALL for further steps.
