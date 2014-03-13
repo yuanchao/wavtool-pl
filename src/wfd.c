@@ -208,6 +208,7 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
 	}
       }
     }
+    fseek(outfile,0,SEEK_CUR);
     ovr=0.0;
     ovrFrames=0;
   }
@@ -258,11 +259,13 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
       r = wfd_mix(sum,d);
       fputc( (char)(r & (0x00ff)), outfile);
       fputc( (char)((r>>8) & 0x00ff), outfile);
+      fseek(outfile,0,SEEK_CUR);
       ovrFrames--;
     } else {
     wfd_append_normal:
       fputc( (char)(sum & (0x00ff)), outfile);
       fputc( (char)((sum>>8) & 0x00ff), outfile);
+      fseek(outfile,0,SEEK_CUR);
     }
     currentFrame++;
   }

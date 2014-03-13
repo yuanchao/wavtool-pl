@@ -184,6 +184,7 @@ int main (int argc, char *argv[]) {
 
   char *outwavhdrfilename,*outwavdatfilename;
   int len;
+  int result=0;
 
   if (parseArgs(argc,argv)!=0) {
     printusage();
@@ -206,7 +207,7 @@ int main (int argc, char *argv[]) {
   }
 
   len = wfd_append(outwavdatfilename,wavtool_args.inputfilename,wavtool_args.offset,wavtool_args.length,wavtool_args.ovr,wavtool_args.p,wavtool_args.v);
-  wfh_putlength(outwavhdrfilename,len);
+  result = wfh_putlength(outwavhdrfilename,len);
 
   return 0;
 }

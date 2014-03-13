@@ -198,7 +198,15 @@ int wfh_putlength(const char *filename, int length) {
   }
 
   /* put file size - 8 here */
+  if (fseek(file1,4,SEEK_SET)!=0) {
+    fclose(file1);
+    return ret;
+  }
   wfh_writeint(file1, 4+4+4+ 4+4+2+2+4+4+2+2+4+4+ length -8 ,4);
+  if (fseek(file1,8,SEEK_SET)!=0) {
+    fclose(file1);
+    return ret;
+  }
 
   if (fread(com1,1,4,file1) != 4) {
     fclose(file1);
@@ -236,7 +244,12 @@ int wfh_putlength(const char *filename, int length) {
     return ret;
   }
 
+  if (fseek(file1,40,SEEK_SET)!=0) {
+    fclose(file1);
+    return ret;
+  }
   wfh_writeint(file1,length,4);
+
   fclose(file1);
   ret=0;
   return ret;
