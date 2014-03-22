@@ -21,3 +21,11 @@ To make a win32 binary, you'll need to put wavtool-pl.exe libsndfile-1.dll
 together. And be aware that you might also need other dll dependencies
 like libgcc_s_sjlj-1.dll and libwinpthread-1.dll which is on your system.
 You can use wine to verify that.
+
+== Release ==
+
+We use the following command
+
+ * 7z a '-xr!*.git' wavtool-pl-win32-<version>.7z wavtool-pl
+
+to release the executable for wavtool-pl.
