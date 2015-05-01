@@ -33,7 +33,7 @@
  */
 void wfd_init(const char *filename) {
   FILE *file1;
-  file1 = fopen(filename,"w");
+  file1 = fopen(filename,"wb");
   if (file1) {
     fclose(file1);
   }
