@@ -8,12 +8,12 @@ This program depends on libsndfile. So we need to have win32 libsndfile first.
 In Debian we can do the following to get libsndfile dll.
 
  1. apt-get source libsndfile
- 2. ./configure --disable-sqlite --disable-external-libs --host 'i586-mingw32msvc'; make
+ 2. ./configure --disable-sqlite --disable-external-libs --host 'i686-w64-mingw32'; make
  3. libsndfile-1.dll will be at src/.libs/
 
 Now we start build wavtool-pl.
 
- 1. ./configure --host 'i586-mingw32msvc' SNDFILE_LIBS="-L/tmp/libsndfile-*/src/.libs -lsndfile-1" SNDFILE_CFLAGS="-I/tmp/libsndfile-*/src/"
+ 1. ./configure --host 'i686-w64-mingw32' SNDFILE_LIBS="-L/tmp/libsndfile-*/src/.libs -lsndfile-1" SNDFILE_CFLAGS="-I/tmp/libsndfile-*/src/"
  2. make
  3. wavtool-pl.exe will be at src/
 

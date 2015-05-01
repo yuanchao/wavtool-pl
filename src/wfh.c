@@ -43,6 +43,7 @@ int wfh_readint(FILE *file1,int len) {
     }
     ret = ret + (int)((c & 0x00ff)*(0x01<<(8*i)));
   }
+  fseek(file1,0,SEEK_CUR);
   return ret;
 }
 
@@ -63,6 +64,8 @@ void wfh_writeint(FILE *file1,int data, int len) {
     d = d/256;
     fputc(w,file1);
   }
+  fflush(file1);
+  fseek(file1,0,SEEK_CUR);
 }
 
 /**
@@ -72,7 +75,7 @@ void wfh_writeint(FILE *file1,int data, int len) {
  */
 void wfh_init(const char *filename) {
   FILE *file1=NULL;
-  file1 = fopen(filename,"w");
+  file1 = fopen(filename,"wb");
   if (!file1) {
     return;
   }
@@ -109,7 +112,7 @@ int wfh_getlength(const char *filename) {
   int ret=-1;
   char com1[100];
   int s;
-  file1=fopen(filename,"r");
+  file1=fopen(filename,"rb");
   if (!file1) {
     return ret;
   }
@@ -182,7 +185,7 @@ int wfh_putlength(const char *filename, int length) {
   int ret=-1;
   char com1[100];
   int s;
-  file1=fopen(filename,"r+");
+  file1=fopen(filename,"r+b");
   if (!file1) {
     return ret;
   }

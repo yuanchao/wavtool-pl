@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <sndfile.h>
 
@@ -91,11 +92,11 @@ double wfd_append_linear_volume(int frame, const int *p, const double *v) {
  * @param b sample B
  * @return sample of A mix B
  */
-short wfd_mix(short a, short b) {
+int16_t wfd_mix(int16_t a, int16_t b) {
   int a_t;
   int b_t;
   int r1;
-  short ret=0.0;
+  int16_t ret=0;
 
   a_t = ((int)a)+32768;
   b_t = ((int)b)+32768;
@@ -109,7 +110,7 @@ short wfd_mix(short a, short b) {
     }
   }
   r1 = r1 - 32768;
-  ret = ((short)r1);
+  ret = ((int16_t)r1);
   return ret;
 }
 
@@ -133,18 +134,18 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
   FILE *outfile=NULL;
   SNDFILE *inputfile=NULL;
   SF_INFO inputfileinfo;
-  short *buf=NULL;
+  int16_t *buf=NULL;
   int p_f[7];
   double v_f[7];
   int currentFrame=0;
   int ovrFrames=0;
   int outputFrames=0;
   int i;
-  short sum;
+  int16_t sum;
   int c1,c2;
 
   memset(&inputfileinfo,0,sizeof(SF_INFO));
-  outfile = fopen(outputfilename,"r+");
+  outfile = fopen(outputfilename,"r+b");
   fseek(outfile,0,SEEK_END);
   if (inputfilename) {
     inputfile = sf_open(inputfilename,SFM_READ,&inputfileinfo);
@@ -208,22 +209,23 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
 	}
       }
     }
+    fflush(outfile);
     fseek(outfile,0,SEEK_CUR);
     ovr=0.0;
     ovrFrames=0;
   }
 
   /* output */
-  buf = (short *)malloc(sizeof(short)*(inputfileinfo.channels));
-  memset(buf,0,sizeof(short)*(inputfileinfo.channels));
+  buf = (int16_t *)malloc(sizeof(int16_t)*(inputfileinfo.channels));
+  memset(buf,0,sizeof(int16_t)*(inputfileinfo.channels));
 
   currentFrame = 0;
   for ( ; outputFrames > 0; outputFrames--) {
     if (inputfile) {
       int result1;
-      result1 = sf_readf_short(inputfile,buf,1);
+      result1 = (int)sf_readf_short(inputfile,buf,1);
       if (result1 < 1) {
-	memset(buf,0,sizeof(short)*(inputfileinfo.channels));
+	memset(buf,0,sizeof(int16_t)*(inputfileinfo.channels));
 	sf_close(inputfile);
 	inputfile=NULL;
       }
@@ -238,12 +240,12 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
       double vf;
       sum = sum/inputfileinfo.channels;
       vf = wfd_append_linear_volume(currentFrame,p_f,v_f);
-      sum = (short)(((double)sum)*(vf/100.0));
+      sum = (int16_t)(((double)sum)*(vf/100.0));
     } else {
       sum=0;
     }
     if (ovrFrames>0) {
-      short d,r;
+      int16_t d,r;
       c1 = fgetc(outfile);
       if (c1 == EOF) {
 	ovrFrames=0;
@@ -257,14 +259,16 @@ int wfd_append(const char *outputfilename, const char *inputfilename,
       fseek(outfile,-2,SEEK_CUR);
       d = (c1 & (0x00ff)) | (((c2 & 0x00ff) << 8) & 0xff00);
       r = wfd_mix(sum,d);
-      fputc( (char)(r & (0x00ff)), outfile);
-      fputc( (char)((r>>8) & 0x00ff), outfile);
+      fputc( (int)((r) & (0x00ff)), outfile);
+      fputc( (int)((r>>8) & 0x00ff), outfile);
+      fflush(outfile);
       fseek(outfile,0,SEEK_CUR);
       ovrFrames--;
     } else {
     wfd_append_normal:
-      fputc( (char)(sum & (0x00ff)), outfile);
-      fputc( (char)((sum>>8) & 0x00ff), outfile);
+      fputc( (int)((sum) & (0x00ff)), outfile);
+      fputc( (int)((sum>>8) & 0x00ff), outfile);
+      fflush(outfile);
       fseek(outfile,0,SEEK_CUR);
     }
     currentFrame++;
